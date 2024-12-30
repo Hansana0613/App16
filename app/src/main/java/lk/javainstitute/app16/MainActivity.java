@@ -1,5 +1,6 @@
 package lk.javainstitute.app16;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -68,6 +69,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button button3 = findViewById(R.id.button3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SQLiteOpenHelper sqLiteHelper = new A(MainActivity.this, "app16.db", null, 1);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SQLiteDatabase sqLiteDatabase = sqLiteHelper.getWritableDatabase();
+
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put("name", "Kasun");
+                        contentValues.put("mobile", "0771234567");
+                        contentValues.put("city", "Kandy");
+
+                        long id = sqLiteDatabase.insert("user", null, contentValues);
+                        Log.i("App16Log",String.valueOf(id));
+                    }
+                }).start();
+            }
+        });
     }
 }
 
