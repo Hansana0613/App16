@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">App16</string>
+    <string name="button1">Save User In SQLite</string>
 </resources>
