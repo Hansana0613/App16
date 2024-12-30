@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                A a = new A(MainActivity.this, "app16.db", null, 1);
+                SQLiteHelper sqLiteHelper = new SQLiteHelper(MainActivity.this, "app16.db", null, 1);
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        SQLiteDatabase sqLiteDatabase = a.getWritableDatabase();
+                        SQLiteDatabase sqLiteDatabase = sqLiteHelper.getWritableDatabase();
                         sqLiteDatabase.execSQL("INSERT INTO `user`(`name`,`mobile`,`city`) VALUES ('Sahan','0771234567','Kandy')");
                     }
                 }).start();
@@ -52,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                A a = new A(MainActivity.this, "app16.db", null, 1);
+                SQLiteHelper sqLiteHelper = new SQLiteHelper(MainActivity.this, "app16.db", null, 1);
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        SQLiteDatabase sqLiteDatabase = a.getWritableDatabase();
+                        SQLiteDatabase sqLiteDatabase = sqLiteHelper.getReadableDatabase();
                         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM `user`", new String[]{});
 
                         while (cursor.moveToNext()) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                SQLiteOpenHelper sqLiteHelper = new A(MainActivity.this, "app16.db", null, 1);
+                SQLiteHelper sqLiteHelper = new SQLiteHelper(MainActivity.this, "app16.db", null, 1);
 
                 new Thread(new Runnable() {
                     @Override
@@ -87,7 +87,47 @@ public class MainActivity extends AppCompatActivity {
                         contentValues.put("city", "Kandy");
 
                         long id = sqLiteDatabase.insert("user", null, contentValues);
-                        Log.i("App16Log",String.valueOf(id));
+                        Log.i("App16Log", String.valueOf(id));
+                    }
+                }).start();
+            }
+        });
+
+        Button button4 = findViewById(R.id.button4);
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SQLiteOpenHelper sqLiteHelper = new SQLiteHelper(MainActivity.this, "app16.db", null, 1);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SQLiteDatabase sqLiteDatabase = sqLiteHelper.getReadableDatabase();
+
+                        String[] projection = new String[]{"id", "name", "city"};
+
+                        String selection = "id=? AND name=?";
+                        String[] selectionArgs = new String[]{"2", "Kasun"};
+
+                        Cursor cursor = sqLiteDatabase.query(
+                                "user",
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                null
+                        );
+
+                        while (cursor.moveToNext()) {
+                            String id = cursor.getString(0);
+                            String name = cursor.getString(1);
+                            String city = cursor.getString(2);
+                            Log.i("App16Log", id);
+                            Log.i("App16Log", name);
+                            Log.i("App16Log", city);
+                        }
                     }
                 }).start();
             }
@@ -95,24 +135,26 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-class A extends SQLiteOpenHelper {
+class SQLiteHelper extends SQLiteOpenHelper {
 
-    public A(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+    public SQLiteHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE `user` (\n" +
-                "  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
-                "  `name` VARCHAR(45) NOT NULL,\n" +
-                "  `mobile` VARCHAR(45) NOT NULL,\n" +
-                "  `city` VARCHAR(45) NOT NULL\n" +
-                "   )");
+
+        sqLiteDatabase.execSQL("CREATE TABLE user (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "name TEXT NOT NULL, " +
+                "mobile TEXT NOT NULL, " +
+                "city TEXT NOT NULL" +
+                ")");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS user");
+        onCreate(sqLiteDatabase);
     }
 }

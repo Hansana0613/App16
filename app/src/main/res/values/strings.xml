@@ -3,4 +3,5 @@
     <string name="button1">Save User In SQLite</string>
     <string name="button2">Search User In SQLite</string>
     <string name="button3">Insert Method In SQLite</string>
+    <string name="button4">Query Method In SQLite</string>
 </resources>
