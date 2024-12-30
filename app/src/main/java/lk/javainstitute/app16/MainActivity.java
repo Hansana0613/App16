@@ -34,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
                 A a = new A(MainActivity.this, "app16.db", null, 1);
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SQLiteDatabase sqLiteDatabase = a.getWritableDatabase();
+                        sqLiteDatabase.execSQL("INSERT INTO `user`(`name`,`mobile`,`city`) VALUES ('Sahan','0771234567','Kandy')");
+                    }
+                }).start();
+
             }
         });
     }
@@ -47,7 +55,12 @@ class A extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("");
+        sqLiteDatabase.execSQL("CREATE TABLE user (\n" +
+                "    id     INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                "    name   TEXT    NOT NULL,\n" +
+                "    mobile TEXT    NOT NULL,\n" +
+                "    city   TEXT    NOT NULL\n" +
+                ");");
     }
 
     @Override
